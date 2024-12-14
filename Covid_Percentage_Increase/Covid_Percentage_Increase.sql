@@ -22,7 +22,7 @@ INSERT INTO covid_cases (cases_reported, dates) VALUES
 (36035, STR_TO_DATE('11/04/2020','%d/%m/%Y')),
 (50099, STR_TO_DATE('13/04/2020','%d/%m/%Y')),
 (87045, STR_TO_DATE('22/04/2020','%d/%m/%Y')),
-(101101, STR_TO_DATE('30/04/2020','%d/%m/%Y')),
+(101101,STR_TO_DATE('30/04/2020','%d/%m/%Y')),
 (40015, STR_TO_DATE('01/05/2020','%d/%m/%Y')),
 (54035, STR_TO_DATE('09/05/2020','%d/%m/%Y')),
 (71099, STR_TO_DATE('14/05/2020','%d/%m/%Y')),
