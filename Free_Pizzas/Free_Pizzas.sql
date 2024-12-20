@@ -50,7 +50,34 @@ TRUNCATE TABLE "30daychallenge".pizza_delivery;
 -- Retrieve all records from the pizza_delivery table
 SELECT * FROM pizza_delivery;
 
--- ######################### Solution_1 - PostgreSQL  ##########################
+-- ######################### Solution_1 - PostgreSQL Using CTE and Time Extraction ##########################
+/*
+Solution Name: Pizza_Delivery_Analytics_Using_Time_Components
+
+Description:
+This solution analyzes pizza delivery performance and free pizza distribution by:
+1. Calculating delivery delays by extracting time components
+2. Computing monthly delay percentages
+3. Tracking free pizzas given for delayed deliveries
+
+Key Components:
+- CTE delivery_stats:
+	- Extracts month and year from order time
+	- Calculates delivery duration in minutes using HOUR and MINUTE components
+	- Tracks number of pizzas per order
+
+- Main Query:
+	- Groups results by month
+	- Calculates delay percentage with proper formatting
+	- Counts free pizzas for delayed orders
+	- Orders results chronologically
+
+Notes:
+- Uses PostgreSQL time extraction functions
+- Assumes 30+ minute delivery time qualifies as delayed
+- Handles null delivery times by excluding them
+- More precise than EPOCH calculation for time differences
+*/
 
 SET search_path TO "30daychallenge";
 
@@ -81,6 +108,33 @@ ORDER BY EXTRACT(MONTH FROM TO_DATE(PERIOD, 'Mon-YYYY'));
 -- #############################################################################
 
 -- ######################### Solution_2 - PostgreSQL  ##########################
+/*
+Solution Name: Delivery_Performance_And_Free_Pizzas_Analysis
+
+Description:
+This query analyzes pizza delivery performance and calculates free pizzas given by month.
+It focuses on:
+1. Monthly delivery delays percentage
+2. Number of free pizzas due to late deliveries (>30 min)
+
+Key Components:
+- CTE delivery_stats: Transforms raw delivery data into analysis-ready format
+	- Extracts month-year period
+	- Calculates delivery time in minutes
+	- Includes number of pizzas per order
+
+- Main Query:
+	- Groups data by month
+	- Calculates percentage of delayed deliveries
+	- Sums up free pizzas for orders exceeding 30 minutes
+	- Orders results chronologically
+
+Notes:
+- Uses PostgreSQL specific functions (TO_CHAR, EXTRACT)
+- Assumes delivery time > 30 minutes qualifies for free pizza
+- Formats delay percentage with % symbol
+- Null delivery times are excluded from analysis
+*/
 
 SET search_path TO "30daychallenge";
 
@@ -107,6 +161,33 @@ ORDER BY TO_DATE(PERIOD, 'Mon-YYYY');
 -- #############################################################################
 
 -- ######################### Solution_3 - PostgreSQL  ##########################
+/*
+Solution Name: Direct_Pizza_Delivery_Analysis
+
+Description:
+This solution provides a direct, single-query approach to analyze pizza delivery performance by:
+1. Calculating delivery delays without using CTEs
+2. Computing percentage of delayed orders per month
+3. Determining free pizzas given for delayed deliveries
+
+Key Components:
+- Direct Query Structure:
+	- Period formatting using TO_CHAR
+	- Inline delivery time calculation using EXTRACT
+	- Conditional aggregation for delays and free pizzas
+	- Month-based sorting
+
+- Time Calculations:
+	- Converts delivery time to minutes using HOUR and MINUTE extraction
+	- Handles delay threshold of 30 minutes
+	- Includes proper null handling
+
+Notes:
+- More compact than CTE-based solutions
+- Uses PostgreSQL's EXTRACT function for precise time calculations
+- May be less readable but more performant for smaller datasets
+- Maintains consistent results with CTE-based approaches
+*/
 
 SET search_path TO "30daychallenge";
 
@@ -155,7 +236,8 @@ FROM
 WHERE
 	ACTUAL_DELIVERY IS NOT NULL
 GROUP BY
-	TO_CHAR(ORDER_TIME, 'Mon-YYYY')ORDER BY
+	TO_CHAR(ORDER_TIME, 'Mon-YYYY')
+ORDER BY
 	EXTRACT(
 		MONTH
 		FROM
