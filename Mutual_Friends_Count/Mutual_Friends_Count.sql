@@ -1,3 +1,6 @@
+-- PROBLEM STATEMENT: 
+-- For the given friends, find the no of mutual friends between them.
+
 -- Create a new schema named '30daychallenge' if it doesn't exist already
 CREATE SCHEMA IF NOT EXISTS "30daychallenge";
 
