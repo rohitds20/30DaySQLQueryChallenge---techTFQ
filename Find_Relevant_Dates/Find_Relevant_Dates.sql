@@ -1,78 +1,54 @@
-CREATE DATABASE 30daychallenge;
+-- PROBLEM STATEMENT:
+-- In the given input table DAY_INDICATOR field indicates the day of the week with the 
+-- first character being Monday, followed by Tuesday and so on. Write a query to filter 
+-- the dates column to showcase only those days where day_indicator character for that day of the week is 1							
 
-USE 30daychallenge;
+-- Create a new schema named '30daychallenge' if it doesn't exist already
+CREATE SCHEMA IF NOT EXISTS "30daychallenge";
 
--- Create the Day_Indicator table
+-- Set the search path to use the '30daychallenge' schema
+SET search_path TO "30daychallenge";
 
+-- Create the Day_Indicator table if it doesn't exist
 CREATE TABLE IF NOT EXISTS Day_Indicator (
     Product_ID     VARCHAR(10),
     Day_Indicator  VARCHAR(7),
     Dates          DATE
 );
 
-
-##################### Solution - MYSQL  ########################## 
-
 -- Insert multiple rows into the Day_Indicator table
 INSERT INTO Day_Indicator (Product_ID, Day_Indicator, Dates) VALUES
-    ('AP755', '1010101', '2024-03-04'),
-    ('AP755', '1010101', '2024-03-05'),
-    ('AP755', '1010101', '2024-03-06'),
-    ('AP755', '1010101', '2024-03-07'),
-    ('AP755', '1010101', '2024-03-08'),
-    ('AP755', '1010101', '2024-03-09'),
-    ('AP755', '1010101', '2024-03-10'),
-    ('XQ802', '1000110', '2024-03-04'),
-    ('XQ802', '1000110', '2024-03-05'),
-    ('XQ802', '1000110', '2024-03-06'),
-    ('XQ802', '1000110', '2024-03-07'),
-    ('XQ802', '1000110', '2024-03-08'),
-    ('XQ802', '1000110', '2024-03-09'),
-    ('XQ802', '1000110', '2024-03-10');
+    ('AP755', '1010101', TO_DATE('04-Mar-2024', 'DD-Mon-YYYY')),
+    ('AP755', '1010101', TO_DATE('05-Mar-2024', 'DD-Mon-YYYY')),
+    ('AP755', '1010101', TO_DATE('06-Mar-2024', 'DD-Mon-YYYY')),
+    ('AP755', '1010101', TO_DATE('07-Mar-2024', 'DD-Mon-YYYY')),
+    ('AP755', '1010101', TO_DATE('08-Mar-2024', 'DD-Mon-YYYY')),
+    ('AP755', '1010101', TO_DATE('09-Mar-2024', 'DD-Mon-YYYY')),
+    ('AP755', '1010101', TO_DATE('10-Mar-2024', 'DD-Mon-YYYY')),
+    ('XQ802', '1000110', TO_DATE('04-Mar-2024', 'DD-Mon-YYYY')),
+    ('XQ802', '1000110', TO_DATE('05-Mar-2024', 'DD-Mon-YYYY')),
+    ('XQ802', '1000110', TO_DATE('06-Mar-2024', 'DD-Mon-YYYY')),
+    ('XQ802', '1000110', TO_DATE('07-Mar-2024', 'DD-Mon-YYYY')),
+    ('XQ802', '1000110', TO_DATE('08-Mar-2024', 'DD-Mon-YYYY')),
+    ('XQ802', '1000110', TO_DATE('09-Mar-2024', 'DD-Mon-YYYY')),
+    ('XQ802', '1000110', TO_DATE('10-Mar-2024', 'DD-Mon-YYYY'));
 
-select * from Day_Indicator;
-
-
--- Find the relevant dates for each product
-
-SELECT 
-    PRODUCT_ID, 
-    DAY_INDICATOR, 
-    DATES
-FROM 
-    Day_Indicator
-WHERE 
-    SUBSTRING(
-        DAY_INDICATOR, 
-        CASE 
-            WHEN DAYOFWEEK(DATES) = 1 THEN 7  -- Sunday
-            ELSE DAYOFWEEK(DATES) - 1         -- Monday to Saturday
-        END, 
-        1
-    ) = '1';
-
-##################### Solution - PostgreSQL  ########################## 
-
--- Insert multiple rows into the Day_Indicator table
-INSERT INTO Day_Indicator (Product_ID, Day_Indicator, Dates) VALUES
-    ('AP755', '1010101', TO_DATE('04-Mar-2024', 'dd-mon-yyyy')),
-    ('AP755', '1010101', TO_DATE('05-Mar-2024', 'dd-mon-yyyy')),
-    ('AP755', '1010101', TO_DATE('06-Mar-2024', 'dd-mon-yyyy')),
-    ('AP755', '1010101', TO_DATE('07-Mar-2024', 'dd-mon-yyyy')),
-    ('AP755', '1010101', TO_DATE('08-Mar-2024', 'dd-mon-yyyy')),
-    ('AP755', '1010101', TO_DATE('09-Mar-2024', 'dd-mon-yyyy')),
-    ('AP755', '1010101', TO_DATE('10-Mar-2024', 'dd-mon-yyyy')),
-    ('XQ802', '1000110', TO_DATE('04-Mar-2024', 'dd-mon-yyyy')),
-    ('XQ802', '1000110', TO_DATE('05-Mar-2024', 'dd-mon-yyyy')),
-    ('XQ802', '1000110', TO_DATE('06-Mar-2024', 'dd-mon-yyyy')),
-    ('XQ802', '1000110', TO_DATE('07-Mar-2024', 'dd-mon-yyyy')),
-    ('XQ802', '1000110', TO_DATE('08-Mar-2024', 'dd-mon-yyyy')),
-    ('XQ802', '1000110', TO_DATE('09-Mar-2024', 'dd-mon-yyyy')),
-    ('XQ802', '1000110', TO_DATE('10-Mar-2024', 'dd-mon-yyyy'));
-
+-- Select all data from the Day_Indicator table
 SELECT * FROM Day_Indicator;
 
--- Find the relevant dates for each product
+-- ######################### Solution_1 - PostgreSQL ##########################
+/*
+Solution Name: Subquery with Flag Approach
+Description: Uses a subquery to create a flag for filtering dates based on day indicator pattern
+Key Components:
+- EXTRACT('ISODOW') to get ISO day of week (1=Monday to 7=Sunday)
+- SUBSTRING to check specific position in day_indicator
+- CASE statement to create Include/Exclude flag
+Notes: 
+- More verbose but clearer to understand the logic
+- Useful when additional flag-based processing is needed
+*/
+
 SELECT 
     product_id, 
     day_indicator, 
@@ -80,7 +56,7 @@ SELECT
 FROM (
     SELECT 
         *, 
-        EXTRACT('ISODOW' FROM dates) AS dow,  -- Extract day of the week (ISO format)
+        EXTRACT('ISODOW' FROM dates) AS dow,
         CASE 
             WHEN SUBSTRING(day_indicator, EXTRACT('ISODOW' FROM dates)::int, 1) = '1' 
             THEN 'Include' 
@@ -90,41 +66,42 @@ FROM (
 ) AS day_status
 WHERE flag = 'Include';
 
+-- ######################### Solution_2 - PostgreSQL  ##########################
+/*
+Solution Name: Direct Filter Approach
+Description: Directly filters rows using WHERE clause without intermediate steps
+Key Components:
+- SUBSTRING function for pattern matching
+- EXTRACT('ISODOW') for day of week
+Notes: 
+- More concise and performant
+- Same logic as Solution 1 but without subquery
+*/
 
-##################### Solution - MSSQL Server  ########################## 
-
--- Insert multiple rows into the Day_Indicator table
-INSERT INTO Day_Indicator (Product_ID, Day_Indicator, Dates) VALUES
-    ('AP755', '1010101', CONVERT(DATE, '04-Mar-2024', 102)),
-    ('AP755', '1010101', CONVERT(DATE, '05-Mar-2024', 102)),
-    ('AP755', '1010101', CONVERT(DATE, '06-Mar-2024', 102)),
-    ('AP755', '1010101', CONVERT(DATE, '07-Mar-2024', 102)),
-    ('AP755', '1010101', CONVERT(DATE, '08-Mar-2024', 102)),
-    ('AP755', '1010101', CONVERT(DATE, '09-Mar-2024', 102)),
-    ('AP755', '1010101', CONVERT(DATE, '10-Mar-2024', 102)),
-    ('XQ802', '1000110', CONVERT(DATE, '04-Mar-2024', 102)),
-    ('XQ802', '1000110', CONVERT(DATE, '05-Mar-2024', 102)),
-    ('XQ802', '1000110', CONVERT(DATE, '06-Mar-2024', 102)),
-    ('XQ802', '1000110', CONVERT(DATE, '07-Mar-2024', 102)),
-    ('XQ802', '1000110', CONVERT(DATE, '08-Mar-2024', 102)),
-    ('XQ802', '1000110', CONVERT(DATE, '09-Mar-2024', 102)),
-    ('XQ802', '1000110', CONVERT(DATE, '10-Mar-2024', 102));
-
-SELECT * FROM Day_Indicator;
-
--- Find the relevant dates for each product
 SELECT 
     product_id, 
     day_indicator, 
     dates
-FROM (
-    SELECT 
-        *, 
-        CASE 
-            WHEN SUBSTRING(day_indicator, (((DATEPART(dw, dates) + 5) % 7) + 1), 1) = '1' 
-            THEN 'Include' 
-            ELSE 'Exclude' 
-        END AS flag
-    FROM Day_Indicator
-) AS day_status
-WHERE flag = 'Include';
+FROM Day_Indicator
+WHERE SUBSTRING(day_indicator, EXTRACT('ISODOW' FROM dates)::int, 1) = '1';
+
+-- ######################### Solution_3 - PostgreSQL  ##########################
+/*
+Solution Name: Alternative Syntax Approach
+Description: Same as Solution 2 but uses SUBSTR and DATE_PART instead
+Key Components:
+- SUBSTR function (alternative to SUBSTRING)
+- DATE_PART (alternative to EXTRACT)
+Notes:
+- Functionally identical to Solution 2
+- Shows PostgreSQL's function flexibility
+*/
+
+SELECT 
+    product_id, 
+    day_indicator, 
+    dates
+FROM Day_Indicator
+WHERE SUBSTR(day_indicator, DATE_PART('ISODOW', dates)::int, 1) = '1';
+
+-- #############################################################################
