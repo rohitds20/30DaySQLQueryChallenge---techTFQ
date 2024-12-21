@@ -1,16 +1,21 @@
-CREATE 30daychallenge;
+-- Problem Statement:					
+-- Write a query to get the minimum id, name and location from the table EmployeeData.
 
-USE 30daychallenge;
+-- Create a new schema named '30daychallenge' if it doesn't exist already
+CREATE SCHEMA IF NOT EXISTS "30daychallenge";
 
+-- Set the search path to use the '30daychallenge' schema
+SET search_path TO "30daychallenge";
 
-CREATE TABLE IF NOT EXISTS 30daychallenge.EmployeeData
-(
+-- Create the EmployeeData table if it doesn't exist
+CREATE TABLE IF NOT EXISTS EmployeeData (
     id         INT,
     name       VARCHAR(20),
     location   VARCHAR(20)
 );
 
-INSERT INTO 30daychallenge.EmployeeData (id, name, location) 
+-- Insert data into the EmployeeData table
+INSERT INTO EmployeeData (id, name, location) 
 VALUES 
     (1, NULL, NULL),
     (2, 'David', NULL),
@@ -18,13 +23,17 @@ VALUES
     (4, NULL, NULL),
     (5, 'David', NULL);
 
+-- Select all data from the EmployeeData table
+SELECT * FROM EmployeeData;
 
-SELECT * FROM 30daychallenge.EmployeeData;
+-- ######################### Solution_1 - PostgreSQL  ##########################
+-- Solution Name: Segregate Data using MIN and MAX
+-- Description: This solution uses the MIN and MAX functions to get the minimum and maximum values for id, name, and location.
+-- Key Components:
+--   - MIN(id), MIN(name), MIN(location): Gets the minimum values for id, name, and location.
+--   - MAX(id), MAX(name), MAX(location): Gets the maximum values for id, name, and location.
+-- Notes: This solution is simple and straightforward, but it may not handle NULL values as expected.
 
-##################### Solution - MYSQL  ##########################
--- This script contains two SQL queries that operate on the EmployeeData table.
--- The first query selects the minimum values of id, name, and location from the EmployeeData table.
--- The second query selects the maximum value of id, and the minimum values of name and location from the EmployeeData table.
 SELECT 
 	MIN(id) as id,
 	MIN(name) as name,
@@ -33,6 +42,8 @@ FROM EmployeeData;
 
 SELECT 
 	MAX(id) as id,
-	MIN(name) as name,
-	MIN(location) as location
+	MAX(name) as name,
+	MAX(location) as location
 FROM EmployeeData;
+
+-- #############################################################################
